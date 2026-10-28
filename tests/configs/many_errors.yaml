@@ -1,0 +1,6 @@
+package: 42
+repository: ftp://example.org
+test_mode: false
+version: latest
+output_image: ""
+ascii_tree: maybe

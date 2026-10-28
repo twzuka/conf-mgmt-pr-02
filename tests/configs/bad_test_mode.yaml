@@ -1,0 +1,6 @@
+package: Serilog
+repository: https://api.nuget.org/v3/index.json
+test_mode: "yes please"
+version: "3.1.1"
+output_image: graph.png
+ascii_tree: false

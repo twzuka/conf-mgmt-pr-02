@@ -1,0 +1,3 @@
+package: Serilog
+repository: [https://api.nuget.org
+test_mode: false

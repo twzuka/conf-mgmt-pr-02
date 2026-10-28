@@ -1,0 +1,6 @@
+package: A
+repository: ../repos/simple.txt
+test_mode: true
+version: "1.0.0"
+output_image: graph.png
+ascii_tree: true
