@@ -5,15 +5,18 @@ import sys
 
 if __package__:
     from .config import ConfigError, load_config
+    from .nuget import NuGetError, get_dependencies, print_dependencies
 else:
     from pathlib import Path
 
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from src.config import ConfigError, load_config
+    from src.nuget import NuGetError, get_dependencies, print_dependencies
 
 DEFAULT_CONFIG = "config.yaml"
 EXIT_SUCCESS = 0
 EXIT_CONFIG_ERROR = 1
+EXIT_DATA_ERROR = 2
 
 
 def parse_args(argv):
@@ -28,19 +31,6 @@ def parse_args(argv):
         help=f"путь к YAML-конфигурации (по умолчанию {DEFAULT_CONFIG})",
     )
     return parser.parse_args(argv)
-
-
-def format_value(value):
-    """Возвращает значение параметра в записи, принятой в YAML."""
-    if isinstance(value, bool):
-        return str(value).lower()
-    return str(value)
-
-
-def print_config(config):
-    """Выводит параметры конфигурации в формате ключ: значение."""
-    for key, value in config.items():
-        print(f"{key}: {format_value(value)}")
 
 
 def report_errors(error):
@@ -58,7 +48,19 @@ def main(argv=None):
     except ConfigError as error:
         report_errors(error)
         return EXIT_CONFIG_ERROR
-    print_config(config)
+    try:
+        if config.test_mode:
+            raise NuGetError(
+                "чтение тестового графа предусмотрено этапом 3; "
+                "для NuGet задайте test_mode: false"
+            )
+        dependencies = get_dependencies(
+            config.repository, config.package, config.version
+        )
+    except NuGetError as error:
+        print(f"Ошибка получения зависимостей: {error}", file=sys.stderr)
+        return EXIT_DATA_ERROR
+    print_dependencies(config.package, config.version, dependencies)
     return EXIT_SUCCESS
 
 

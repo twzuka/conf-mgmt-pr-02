@@ -37,20 +37,18 @@ class ValidConfigTest(unittest.TestCase):
         self.assertTrue(config.test_mode)
         self.assertEqual(Path(config.repository), REPOS / "simple.txt")
 
-    def test_prints_all_parameters(self):
-        """Все шесть параметров печатаются в формате ключ: значение."""
-        code, out, err = run_app("valid.yaml")
-        self.assertEqual(code, app.EXIT_SUCCESS)
-        self.assertEqual(err, "")
+    def test_loads_all_parameters(self):
+        """Все шесть параметров сохраняются в проверенной конфигурации."""
+        config = load_config(CONFIGS / "valid.yaml")
         self.assertEqual(
-            out.splitlines(),
+            config.items(),
             [
-                "package: Serilog",
-                "repository: https://api.nuget.org/v3/index.json",
-                "test_mode: false",
-                "version: 3.1.1",
-                "output_image: graph.png",
-                "ascii_tree: false",
+                ("package", "Serilog"),
+                ("repository", "https://api.nuget.org/v3/index.json"),
+                ("test_mode", False),
+                ("version", "3.1.1"),
+                ("output_image", "graph.png"),
+                ("ascii_tree", False),
             ],
         )
 
